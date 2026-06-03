@@ -4,37 +4,33 @@ import Link from "next/link";
 
 export function Navigation() {
     return (
-        <header className="w-full border-b border-gray-300 bg-white dark:border-neutral-800 dark:bg-zinc-900">
-            <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-4">
-                <span>
-                    <nav>
-                        <Link 
-                            href="/"
-                            className="text-sm font-medium text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
-                        >
-                            Home
-                        </Link>
-                        <Link
-                            href="/products"
-                            className="text-sm font-medium text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
-                        >
-                            Products
-                        </Link>
-                        <Link
-                            href="/cart"
-                            className="text-sm font-medium text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
-                        >
-                            Cart
-                        </Link>
-                        <Link
-                            href="/sign-out"
-                            className="text-sm font-medium text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
-                        >
-                            Sign Out
-                        </Link>
-                    </nav>
-                </span>
-            </div>
+        <header className=" relative flex flex-row items-center justify-between w-full border-b border-gray-300 bg-white px-8 py-2">
+            <h1 className="text-2xl font-bold text-black">Revoshop</h1>
+            
+            
+            <nav className=" absolute left-1/2 -translate-x-1/2 flex items-center gap-4 text-black">
+                <Link 
+                    href="/"
+                    className="text-sm font-medium text-black hover:text-slate-500 cursor-pointer"
+                >
+                    Home
+                </Link>
+                <Link
+                    href="/products"
+                    className="text-sm font-medium text-black hover:text-slate-500 cursor-pointer"
+                >
+                    Products
+                </Link>
+                <Link
+                    href="/cart"
+                    className="text-sm font-medium text-black hover:text-slate-500 cursor-pointer"
+                >
+                    Cart
+                </Link>
+            </nav>
+            <button className="ml-auto text-sm font-medium text-black hover:text-slate-500 cursor-pointer">
+                Sign Out
+            </button>
         </header>
     );
 }
