@@ -28,9 +28,12 @@ export function Navigation() {
                     Cart
                 </Link>
             </nav>
-            <button className="ml-auto text-sm font-medium text-black hover:text-slate-500 cursor-pointer">
-                Sign Out
-            </button>
+            <Link 
+                href="/login"
+                className="ml-auto text-sm font-medium text-black hover:text-slate-500 cursor-pointer"
+            >
+                Sign In
+            </Link>
         </header>
     );
 }
