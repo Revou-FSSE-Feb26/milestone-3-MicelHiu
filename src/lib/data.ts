@@ -107,8 +107,8 @@ export const categories = [
     "Sports",
 ];
 
-export const formatPrice = (price: number): void => {
-    new Intl.NumberFormat("id-ID", {
+export const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("id-ID", {
         style: "currency",
         currency: "IDR",
         minimumFractionDigits: 0,

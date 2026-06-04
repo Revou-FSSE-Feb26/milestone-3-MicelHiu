@@ -10,7 +10,7 @@ export function Navigation() {
             
             <nav className=" absolute left-1/2 -translate-x-1/2 flex items-center gap-4 text-black">
                 <Link 
-                    href="/"
+                    href="/dashboard"
                     className="text-sm font-medium text-black hover:text-slate-500 cursor-pointer"
                 >
                     Home
@@ -27,12 +27,18 @@ export function Navigation() {
                 >
                     Cart
                 </Link>
+                <Link
+                    href="/faq"
+                    className="text-sm font-medium text-black hover:text-slate-500 cursor-pointer"
+                >
+                    FAQ
+                </Link>
             </nav>
             <Link 
                 href="/login"
                 className="ml-auto text-sm font-medium text-black hover:text-slate-500 cursor-pointer"
             >
-                Sign In
+                Your Store
             </Link>
         </header>
     );

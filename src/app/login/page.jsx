@@ -26,13 +26,7 @@ export default function LoginPage() {
             formData.password === "admin"
         ) {
             alert("Login successful!");
-            router.push("/dashboard/admin");
-        } else if (
-            formData.email === "user@gmail.com" &&
-            formData.password === "user"
-        ) {
-            alert("Login successful!");
-            router.push("/dashboard/user");
+            router.push("/dashboard");
         } else {
             alert("Invalid email or password. Please try again.");
         }
@@ -43,7 +37,7 @@ export default function LoginPage() {
             <section className="flex flex-col justify-center align-center w-full shadow-2xl p-12 gap-4 rounded-2xl max-w-md text-center bg-white text-black">
                 <header>
                     <h1 className="text-3xl font-bold text-slate-800">Welcome to Revoshop</h1>
-                    <p className="mt-2 text-xs text-slate-500">please use admin@gmail.com / admin or user@gmail.com / user</p>
+                    <p className="mt-2 text-xs text-slate-500">Sign in to promote your products!</p>
                 </header>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
@@ -75,6 +69,9 @@ export default function LoginPage() {
                     </div>
                     <button type="submit" className="w-full rounded-lg bg-black py-3 font-medium text-white hover:bg-white hover:text-black">Login</button>
                 </form>
+            </section>
+            <section>
+                <p className="mt-2 text-xs text-slate-500">Use admin@gmail.com / admin for demo</p>
             </section>
         </main>
     );

@@ -1,10 +1,10 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { products, categories } from "@/lib/data";
+import { products, categories, formatPrice } from "@/lib/data";
 import Link from "next/link";
 
 function ProductsContent() {
@@ -18,7 +18,7 @@ function ProductsContent() {
     return (
         <>
             <Navigation />
-            <main className="max-w-6xl mx-auto w-full px-6 py-10 flex gap-8 min-h-screen">
+            <main className="bg-white text-black max-w-6xl mx-auto w-full px-6 py-10 flex gap-8 min-h-screen">
                 {/* sidebar filter */}
                 <aside className="w-48 shrink-0">
                     <h2 className="font-bold text-sm uppercase tracking-widest text-black mb-4">Category</h2>
@@ -43,13 +43,34 @@ function ProductsContent() {
                             ({filtered.length} items)
                         </span>
                     </h1>
-                    <div className="">
-                        <Link href={}>
-                            <img />
-                        </Link>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                        {filtered.map((product) => (
+                            <Link 
+                                key={product.id}
+                                href={`/products/${product.id}`}
+                                className="group border border-gray-500 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition"
+                            >
+                                <img src={product.image} alt={product.name} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"/>
+                                <div className="p-4">
+                                    <span className="text-xs text-gray-600 uppercase tracking-wide">{product.category}</span>
+                                    <h3 className="font-semibold text-sm mt-1 line-clamp-1">{product.name}</h3>
+                                    <p className="text-gray-500 text-xs mt-1 line-clamp-2">{product.description}</p>
+                                    <p className="font-bold mt-2">{formatPrice(product.price)}</p>
+                                </div>
+                            </Link>
+                        ))}
                     </div>
                 </section>
             </main>
+            <Footer />
         </>
-    )
+    );
+}
+
+export default function ProductsPage() {
+    return (
+        <Suspense>
+            <ProductsContent />
+        </Suspense>
+    );
 }

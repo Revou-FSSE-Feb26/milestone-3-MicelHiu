@@ -24,8 +24,8 @@ export default function UserDashboard() {
         <>
             <Navigation />
             <main className="flex flex-col bg-white text-black min-h-screen">
-                <section>
-                    <h1 className="text-2xl font-bold">Welcome to Revoshop</h1>
+                <section className="w-full py-16 px-6 text-center">
+                    <h1 className="text-5xl font-bold">Welcome to Revoshop</h1>
                     <p>Everything you need, all in one place.</p>
                 </section>
                 
@@ -97,14 +97,14 @@ export default function UserDashboard() {
                 ))}
 
                 {/* sign in */}
-                <section className="w-full bg-gray-400 text-black py-16 px-6 text-center">
+                <section className="w-full bg-gray-200 text-black py-16 px-6 text-center">
                     <h2 className="text-3xl font-bold mb-3">Have anything to sell?</h2>
                     <p className="text-gray-900 mb-6 max-w-md mx-auto">
                         Join thousands of sellers on Revoshop. List your products, reach more customers, and grow your business — all in one place.
                     </p>
                     <Link 
                         href="/login"
-                        className="inline-block bg-black text-white font-semibold px-8 py-3 rounded-full hover:bg-gray-200 transition"
+                        className="inline-block bg-black text-white font-semibold px-8 py-3 rounded-full hover:bg-gray-200 hover:text-black transition"
                     >
                         Sign In
                     </Link>
