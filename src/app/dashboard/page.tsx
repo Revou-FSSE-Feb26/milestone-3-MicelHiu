@@ -4,18 +4,27 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Footer } from "@/components/Footer";
 import { Navigation } from "@/components/Navigation";
-import { products, categories, formatPrice } from "@/lib/data";
-
-// produk untuk slider (rekomendasi produk)
-const featured = products.slice(0, 4);
+import { products as initialProducts, categories, formatPrice, Product } from "@/lib/data";
 
 export default function UserDashboard() {
     const [slide, setSlide] = useState(0);
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [productList, setProductList] = useState<Product[]>([]);
+
+    // produk untuk slider (rekomendasi produk)
+    const featured = productList.slice(0, 4);
 
     //auto rotate slider setiap 3 detik
     useEffect(() => {
+        const stored = localStorage.getItem("revoshop_products");
+        const list = stored ? JSON.parse(stored) : initialProducts;
+        setProductList(list);
+
+        const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+        setIsLoggedIn(loggedIn);
+
         const timer = setInterval(() => {
-            setSlide((prev) => (prev + 1) % featured.length);
+            setSlide((prev) => (prev + 1) % list.slice(0, 4).length);
         }, 3000);
         return () => clearInterval(timer);
     }, []);
@@ -79,7 +88,7 @@ export default function UserDashboard() {
                             </Link>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                            {products
+                            {productList
                                 .filter((p) => p.category === cat)
                                 .slice(0, 3)
                                 .map((product) => (
@@ -103,10 +112,10 @@ export default function UserDashboard() {
                         Join thousands of sellers on Revoshop. List your products, reach more customers, and grow your business — all in one place.
                     </p>
                     <Link 
-                        href="/login"
+                        href={isLoggedIn ? "/dashboard/admin" : "/login"}
                         className="inline-block bg-black text-white font-semibold px-8 py-3 rounded-full hover:bg-gray-200 hover:text-black transition"
                     >
-                        Sign In
+                        {isLoggedIn ? "Visit Your Store" : "Sign In"}
                     </Link>
                 </section>
             </main>

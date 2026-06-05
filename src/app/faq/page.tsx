@@ -1,4 +1,5 @@
 import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
 
 const faqs = [
     { q: "How do I place an order?", a: "Browse products, click 'Add to Cart', then proceed to checkout from the Cart page." },
@@ -24,6 +25,7 @@ export default function FAQPage() {
             ))}
             </div>
         </main>
+        <Footer />
         </>
     );
 }

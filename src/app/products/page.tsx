@@ -1,16 +1,22 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { products, categories, formatPrice } from "@/lib/data";
+import { products as initialProducts, categories, formatPrice, Product } from "@/lib/data";
 import Link from "next/link";
 
 function ProductsContent() {
     const searchParams = useSearchParams();
     const initialCategory = searchParams.get("category") || "All";
     const [selected, setSelected] = useState(initialCategory);
+    const [products, setProducts] = useState<Product[]>([]);
+
+    useEffect(() => {
+        const stored = localStorage.getItem("revoshop_products");
+        setProducts(stored ? JSON.parse(stored) : initialProducts);
+    }, []);
 
     const filtered = 
         selected === "All" ? products : products.filter((p) => p.category === selected);
@@ -18,7 +24,7 @@ function ProductsContent() {
     return (
         <>
             <Navigation />
-            <main className="bg-white text-black max-w-6xl mx-auto w-full px-6 py-10 flex gap-8 min-h-screen">
+            <main className="bg-white text-black max-w-6xl mx-auto w-full px-6 py-10 flex gap-8 min-h-screen min-w-screen">
                 {/* sidebar filter */}
                 <aside className="w-48 shrink-0">
                     <h2 className="font-bold text-sm uppercase tracking-widest text-black mb-4">Category</h2>

@@ -1,8 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function Navigation() {
+    const router = useRouter();
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+    useEffect(() => {
+        const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+        setIsLoggedIn(loggedIn);
+    }, []);
+
+    const handleSignOut = () => {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("userEmail");
+        setIsLoggedIn(false);
+        router.push("/dashboard");
+    };
+
     return (
         <header className=" relative flex flex-row items-center justify-between w-full border-b border-gray-300 bg-white px-8 py-2">
             <h1 className="text-2xl font-bold text-black">Revoshop</h1>
@@ -34,12 +51,27 @@ export function Navigation() {
                     FAQ
                 </Link>
             </nav>
-            <Link 
-                href="/login"
-                className="ml-auto text-sm font-medium text-black hover:text-slate-500 cursor-pointer"
-            >
-                Your Store
-            </Link>
+
+            { isLoggedIn ? (
+                <div className="ml-auto flex items-center gap-3">
+                    <Link 
+                        href="/dashboard/admin"
+                        className="ml-auto text-sm font-medium text-black hover:text-slate-500 cursor-pointer"
+                    >
+                    Your Store
+                    </Link>
+                    <button
+                        onClick={handleSignOut}
+                        className="text-sm font-medium text-black hover:text-slate-500 cursor-pointer"
+                    >
+                        Sign Out
+                    </button>
+                </div>
+            ) : (
+                <Link href="/login" className="ml-auto text-sm font-medium text-black hover:text-slate-500">
+                    Your Store
+                </Link>
+            )}
         </header>
     );
 }

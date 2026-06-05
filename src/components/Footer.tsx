@@ -4,8 +4,8 @@ import Link from "next/link";
 
 export function Footer() {
     return (
-        <footer className="mt-auto w-full bg-white text-black py-10 px-8 border-gray-300">
-            <div className="max-w-6xl mx-16 flex flex-row justify-between gap-4">
+        <footer className="mt-auto w-full bg-white text-black py-10 px-8 border-gray-300 border-t-2">
+            <div className="max-w-6xl mx-auto flex flex-row justify-between gap-4 items-center">
                 <section className="flex flex-col flex-wrap">
                     <h2 className="text-lg font-bold mb-2">Revoshop</h2>
                     <p className="text-sm text-gray-600 flex-wrap">
@@ -34,6 +34,12 @@ export function Footer() {
                         >
                             Cart
                         </Link>
+                        <Link
+                            href="/faq"
+                            className="text-sm font-medium text-black hover:text-slate-500 cursor-pointer"
+                        >
+                            FAQ
+                        </Link>
                     </nav>
                 </section>
                 <section className="flex flex-col">
@@ -45,7 +51,7 @@ export function Footer() {
                     </ul>
                 </section>
             </div>
-            <div className="mt-8 border-t border-gray-300text-center text-sm text-gray-500">
+            <div className="mt-8 border-t border-gray-300 text-center text-sm text-gray-500">
                 © {new Date().getFullYear()} Revoshop. All rights reserved.
             </div>
         </footer>

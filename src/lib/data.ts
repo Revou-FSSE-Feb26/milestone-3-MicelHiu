@@ -1,4 +1,4 @@
-export type Product = {
+export interface Product {
     id: number;
     name: string;
     description: string;
@@ -6,6 +6,21 @@ export type Product = {
     image: string;
     category: string;
 };
+
+export interface ProductFormInput {
+    name: string;
+    description: string;
+    price: number;
+    image: string;
+    category: string;
+}
+
+export interface ProductItemProps {
+    product: Product;
+    onEdit: (product: Product) => void;
+    onDelete: (id: number) => void;
+    disabled: boolean;
+}
 
 export const products: Product[] = [
     {
@@ -62,7 +77,7 @@ export const products: Product[] = [
         name: "Scented Soy Candle Set",
         description: "Set of 3 hand-poured soy wax candles in calming lavender, warm vanilla, and fresh eucalyptus scents. 40-hour burn time each.",
         price: 145000,
-        image: "https://images.unsplash.com/photo-1602874801006-2b6f4fd17982?w=400",
+        image: "https://images.unsplash.com/photo-1643122966676-29e8597257f7",
         category: "Home & Living",
     },
     {
@@ -114,3 +129,14 @@ export const formatPrice = (price: number) => {
         minimumFractionDigits: 0,
     }). format(price);
 };
+
+export function getProducts(): Product[] {
+    if(typeof window === "undefined") return products;
+
+    try {
+        const stored = localStorage.getItem("revoshop_products");
+        return stored ? JSON.parse(stored) : products;
+    } catch {
+        return products;
+    }
+}

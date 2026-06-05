@@ -30,7 +30,7 @@ export default function CartPage() {
     return (
     <>
         <Navigation />
-        <main className="max-w-3xl mx-auto w-full px-6 py-12 min-h-screen">
+        <main className="max-w-3xl mx-auto w-full px-6 py-12 min-h-screen bg-white text-black min-w-screen">
             <h1 className="text-2xl font-bold mb-8">Your Cart</h1>
 
             {cart.length === 0 && !showThanks ? (
@@ -65,7 +65,7 @@ export default function CartPage() {
                 </div>
                 <button
                     onClick={handleCheckout}
-                    className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-800 hover:text-white transition cursor-pointer"
+                    className="bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-black transition cursor-pointer"
                 >
                     Checkout
                 </button>
