@@ -3,8 +3,9 @@
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Navigation } from "@/components/Navigation";
-import { products as initialProducts, formatPrice, Product } from "@/lib/data";
+import { fetchProductById, formatPrice, Product } from "@/lib/data";
 import { addToCart } from "@/lib/cartStore";
+import Image from "next/image";
 
 export default function ProductDetailPage({ params }: { params: Promise<{id: string }> }) {
     const {id} = use(params);
@@ -14,10 +15,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{id: str
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const stored = localStorage.getItem("revoshop_products");
-        const list: Product[] = stored ? JSON.parse(stored) : initialProducts;
-        setProduct(list.find((p) => p.id === Number(id)));
-        setLoading(false);
+        fetchProductById(Number(id)).then((data) => {
+            setProduct(data ?? undefined);
+            setLoading(false);
+        })
     }, [id]);
 
     if (loading) {
@@ -61,10 +62,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{id: str
                 </button>
 
                 <div className="flex flex-col md:flex-row gap-12">
-                    <img
+                    <Image
                         src={product.image}
                         alt={product.name}
                         className="w-full md:w-1/2 h-80 object-cover rounded-2xl shadow"
+                        width={600}
+                        height={400}
                     />
                     <div className="flex flex-col justify-center gap-4">
                         <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">

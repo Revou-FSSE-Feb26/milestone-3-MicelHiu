@@ -4,18 +4,22 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { products as initialProducts, categories, formatPrice, Product } from "@/lib/data";
+import { fetchProducts, fetchCategories, formatPrice, Product } from "@/lib/data";
 import Link from "next/link";
+import Image from "next/image";
 
 function ProductsContent() {
     const searchParams = useSearchParams();
     const initialCategory = searchParams.get("category") || "All";
     const [selected, setSelected] = useState(initialCategory);
     const [products, setProducts] = useState<Product[]>([]);
+    const [categories, setCategories] = useState<string[]>([]);
 
     useEffect(() => {
-        const stored = localStorage.getItem("revoshop_products");
-        setProducts(stored ? JSON.parse(stored) : initialProducts);
+        Promise.all([fetchProducts(), fetchCategories()]).then(([prods, cats]) => {
+            setProducts(prods);
+            setCategories(cats);
+        });
     }, []);
 
     const filtered = 
@@ -56,7 +60,12 @@ function ProductsContent() {
                                 href={`/products/${product.id}`}
                                 className="group border border-gray-500 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition"
                             >
-                                <img src={product.image} alt={product.name} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"/>
+                                <Image 
+                                    src={product.image} 
+                                    alt={product.name} 
+                                    width={600} 
+                                    height={400}
+                                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"/>
                                 <div className="p-4">
                                     <span className="text-xs text-gray-600 uppercase tracking-wide">{product.category}</span>
                                     <h3 className="font-semibold text-sm mt-1 line-clamp-1">{product.name}</h3>

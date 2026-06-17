@@ -1,3 +1,11 @@
+import axios from "axios";
+import { privateDecrypt } from "node:crypto";
+import { title } from "node:process";
+
+const api = axios.create({
+    baseURL: "https://fakestoreapi.com",
+});
+
 export interface Product {
     id: number;
     name: string;
@@ -22,105 +30,26 @@ export interface ProductItemProps {
     disabled: boolean;
 }
 
-export const products: Product[] = [
-    {
-        id: 1,
-        name: "Wireless Noise-Cancelling Headphones",
-        description: "Premium over-ear headphones with active noise cancellation, 30-hour battery life, and crystal clear sound. Perfect for travel, work, or relaxation.",
-        price: 299000,
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
-        category: "Electronics",
-    },
-    {
-        id: 2,
-        name: "Smart Watch Series 5",
-        description: "Track your fitness, reveive notifications, and monitor your health with this sleek smartwatch. Water resistant up to 50 meters and 100 hour battery life.",
-        price: 125000,
-        image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400",
-        category: "Electronics",
-    },
-    {
-        id: 3,
-        name: "Portable Bluetooth Speaker",
-        description: "360 degree sound, IPX7 waterproof, and 12-hour playtime. The ideal companion for outdoor adventures, beach days, or backyard parties.",
-        price: 450000,
-        image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400",
-        category: "Electronics",
-    },
-    {
-        id: 5,
-        name: "Minimalist Canvas Backpack",
-        description: "Clean lines, durable canvas material, and plenty of compartments. Fits a 15-inch laptop and all your daily essentials.",
-        price: 320000,
-        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400",
-        category: "Fashion",
-    },
-    {
-        id: 6,
-        name: "Slim-Fit Chino Pants",
-        description: "Versatile chino pants crafted from stretch cotton blend. Goes from casual to smart-casual effortlessly.",
-        price: 199000,
-        image: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400",
-        category: "Fashion",
-    },
-    // Home & Living
-    {
-        id: 7,
-        name: "Ceramic Pour-Over Coffee Set",
-        description: "Handcrafted ceramic dripper with matching server. Brew barista-quality coffee at home with precise pour control.",
-        price: 385000,
-        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400",
-        category: "Home & Living",
-    },
-    {
-        id: 8,
-        name: "Scented Soy Candle Set",
-        description: "Set of 3 hand-poured soy wax candles in calming lavender, warm vanilla, and fresh eucalyptus scents. 40-hour burn time each.",
-        price: 145000,
-        image: "https://images.unsplash.com/photo-1643122966676-29e8597257f7",
-        category: "Home & Living",
-    },
-    {
-        id: 9,
-        name: "Wooden Desk Organizer",
-        description: "Keep your workspace tidy with this 5-slot bamboo desk organizer. Holds pens, notebooks, phone, and more.",
-        price: 98000,
-        image: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=400",
-        category: "Home & Living",
-    },
-    // Sports
-    {
-        id: 10,
-        name: "Yoga Mat Premium",
-        description: "6mm thick eco-friendly TPE mat with non-slip surface and carrying strap. Supports all yoga styles and intensity levels.",
-        price: 265000,
-        image: "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=400",
-        category: "Sports",
-    },
-    {
-        id: 11,
-        name: "Stainless Steel Water Bottle",
-        description: "Double-wall vacuum insulated. Keeps drinks cold 24 hours, hot 12 hours. BPA-free and leak-proof.",
-        price: 175000,
-        image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400",
-        category: "Sports",
-    },
-    {
-        id: 12,
-        name: "Resistance Band Set",
-        description: "Set of 5 resistance bands with varying tension levels. Perfect for home workouts, stretching, and physical therapy.",
-        price: 115000,
-        image: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400",
-        category: "Sports",
-    },
-];
+interface FakeStoreProduct {
+    id: number;
+    title: string;
+    price: number;
+    description: string;
+    category: string;
+    image: string;
+}
 
-export const categories = [
-    "Electronics",
-    "Fashion",
-    "Home & Living",
-    "Sports",
-];
+const USD_TO_IDR = 16000;
+function mapFakeStoreProduct(p: FakeStoreProduct): Product {
+    return {
+        id: p.id,
+        name: p.title,
+        description: p.description,
+        price: p.price * USD_TO_IDR,
+        image: p.image,
+        category: p.category,
+    };
+}
 
 export const formatPrice = (price: number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -130,13 +59,50 @@ export const formatPrice = (price: number) => {
     }). format(price);
 };
 
-export function getProducts(): Product[] {
-    if(typeof window === "undefined") return products;
+export async function fetchProducts(limit=20): Promise<Product[]> {
+    const res = await api.get<FakeStoreProduct[]>("/products");
+    return res.data.map(mapFakeStoreProduct);
+}
 
+export async function fetchProductById(id: number): Promise<Product | null> {
     try {
-        const stored = localStorage.getItem("revoshop_products");
-        return stored ? JSON.parse(stored) : products;
+        const res = await api.get<FakeStoreProduct>(`/products/${id}`);
+        return mapFakeStoreProduct(res.data);
     } catch {
-        return products;
+        return null;
     }
+}
+
+export async function fetchCategories(): Promise<string[]> {
+    const res = await api.get<string[]>("products/categories");
+    return res.data;
+}
+
+export async function createProduct(data: ProductFormInput): Promise<Product> {
+    const payload = {
+        title: data.name,
+        price: data.price,
+        description: data.description,
+        images: data.image,
+        categoryId: data.category,
+    };
+    const res = await api.post<FakeStoreProduct>("/products", payload);
+    return mapFakeStoreProduct(res.data);
+}
+
+export async function updateProduct(id: number, data: ProductFormInput): Promise<Product> {
+    const payload = {
+        title: data.name,
+        price: data.price,
+        description: data.description,
+        images: data.image,
+        category: data.category,
+    };
+    const res = await api.put<FakeStoreProduct>(`/products/${id}`, payload);
+    return mapFakeStoreProduct(res.data);
+}
+
+export async function deleteProduct(id:number): Promise<boolean> {
+    const res = await api.delete<boolean>(`/products/${id}`);
+    return res.status === 200;
 }

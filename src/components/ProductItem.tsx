@@ -1,5 +1,6 @@
 import { ProductItemProps } from "@/lib/data";
 import { formatPrice } from "@/lib/data";
+import Image from "next/image";
 
 export function ProductItem({ product, onEdit, onDelete, disabled}: ProductItemProps) {
     return (
@@ -8,7 +9,12 @@ export function ProductItem({ product, onEdit, onDelete, disabled}: ProductItemP
                 <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-lg overflow-hidden bg-white text-black shrink-0">
                         {product.image ? (
-                            <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+                            <Image 
+                                src={product.image} 
+                                alt={product.name} 
+                                width={200}
+                                height={100}
+                                className="h-full w-full object-cover" />
                         ) : (
                             <div className="text-xl flex h-full w-full items-center justify-center">📦</div>
                         )}

@@ -4,30 +4,38 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Footer } from "@/components/Footer";
 import { Navigation } from "@/components/Navigation";
-import { products as initialProducts, categories, formatPrice, Product } from "@/lib/data";
+import {
+    fetchProducts, fetchCategories, formatPrice, Product
+} from "@/lib/data";
+import Image from "next/image";
 
 export default function UserDashboard() {
     const [slide, setSlide] = useState(0);
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [productList, setProductList] = useState<Product[]>([]);
+    const [categories, setCategories] = useState<string[]>([]);
 
     // produk untuk slider (rekomendasi produk)
     const featured = productList.slice(0, 4);
 
     //auto rotate slider setiap 3 detik
     useEffect(() => {
-        const stored = localStorage.getItem("revoshop_products");
-        const list = stored ? JSON.parse(stored) : initialProducts;
-        setProductList(list);
-
         const loggedIn = localStorage.getItem("isLoggedIn") === "true";
         setIsLoggedIn(loggedIn);
 
+        Promise.all([fetchProducts(), fetchCategories()]).then(([prods, cats]) => {
+            setProductList(prods);
+            setCategories(cats);
+        });
+    }, []);
+
+    useEffect(() => {
+        if(featured.length === 0) return;
         const timer = setInterval(() => {
-            setSlide((prev) => (prev + 1) % list.slice(0, 4).length);
+            setSlide((prev) => (prev + 1) % featured.length);
         }, 3000);
         return () => clearInterval(timer);
-    }, []);
+    }, [featured.length]);
 
     return (
         <>
@@ -45,10 +53,12 @@ export default function UserDashboard() {
                             key={product.id}
                             className={`absolute inset-0 flex transition-opacity duration-700 ${i === slide ? "opacity-100 z-10" : "opacity-0 z-0"}`}
                         >
-                            <img
+                            <Image
                                 src={product.image}
                                 alt={product.name}
                                 className="w-1/2 object-cover"
+                                width={800}
+                                height={400}
                             />
                             <div className="w-1/2 flex flex-col justify-center px-12 gap-3 bg-white">
                                 <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">
@@ -93,7 +103,11 @@ export default function UserDashboard() {
                                 .slice(0, 3)
                                 .map((product) => (
                                     <Link key={product.id} href={`/products/${product.id}`} className="group border border-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
-                                        <img src={product.image} alt={product.name} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
+                                        <Image 
+                                            src={product.image} 
+                                            alt={product.name} 
+                                            width={400} 
+                                            height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
                                         <div className="p-4">
                                             <h3 className="font-semibold text-sm line-clamp-1">{product.name}</h3>
                                             <p className="text-gray-500 text-xs mt-1 line-clamp-2">{product.description}</p>

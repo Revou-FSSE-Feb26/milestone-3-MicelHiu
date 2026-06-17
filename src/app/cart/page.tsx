@@ -5,6 +5,7 @@ import { Navigation } from "@/components/Navigation";
 import { getCart, removeFromCart, clearCart, cartItem } from "@/lib/cartStore";
 import { formatPrice } from "@/lib/data";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function CartPage() {
     const [cart, setCart] = useState<cartItem[]>([]);
@@ -40,7 +41,7 @@ export default function CartPage() {
                 <ul className="flex flex-col gap-4 mb-8">
                 {cart.map((item) => (
                     <li key={item.id} className="flex items-center gap-4 border border-gray-100 rounded-xl p-4 shadow-sm">
-                    <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg" />
+                    <Image src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg"/*  width={80} height={80} */ />
                     <div className="flex-1">
                         <h3 className="font-semibold text-sm">{item.name}</h3>
                         <p className="text-xs text-gray-400">Qty: {item.quantity}</p>
