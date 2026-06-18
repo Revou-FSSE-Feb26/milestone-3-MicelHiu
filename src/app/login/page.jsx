@@ -2,33 +2,30 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null)
 
     const router = useRouter();
+    const { login } = useAuth();
 
-    const handleLoginSubmit = (e) => {
+    const handleLoginSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         setLoading(true);
 
-        //mock authentication check
-        setTimeout(() => {
-            if(email.trim() === "admin@gmail.com" && password === "admin") {
-                localStorage.setItem("isLoggedIn", "true");
-                localStorage.setItem("userEmail", email.trim());
-                //sync header state across windows/components
-                window.dispatchEvent(new Event("storage"));
-                router.push("/dashboard/admin");
-            } else {
-                setError("Invalid email or password. Hint: admin@gmail.com / admin");
-                setLoading(false);
-            }
-        }, 600)
+        try {
+            await login(username.trim(), password);
+            router.push('/dashboard/admin');
+        } catch (err) {
+            setError(err.message || 'invalid username or password');
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -52,14 +49,15 @@ export default function LoginPage() {
 
                     <form onSubmit={handleLoginSubmit} className="flex flex-col gap-4">
                         <div className="flex flex-row justify-center items-center gap-2 mb-4 border-b border-gray-300 pb-4">
-                            <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">
-                                Email Address
+                            <label htmlFor="username" className="mb-2 block text-sm font-medium text-slate-700">
+                                Username
                             </label>
                             <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="e.g admin@gmail.com"
+                                type="text"
+                                id='username'
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                placeholder="e.g mor_22314"
                                 required
                                 className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-gray-500 focus:ring-2 focus:ring-slate-200"
                             />
@@ -91,7 +89,7 @@ export default function LoginPage() {
                     <footer className="mt-6 border-t border-slate-100 pt-4 text-center">
                         <p className="text-[10px] text-slate-400 leading-normal">
                             Demo Credentials:<br />
-                        <span className="font-semibold text-slate-550">admin@gmail.com</span> / <span className="font-semibold text-slate-550">admin</span>
+                        <span className="font-semibold text-slate-550">mor_2314</span> / <span className="font-semibold text-slate-550">83r5^_</span>
                         </p>
                     </footer>
                 </section>

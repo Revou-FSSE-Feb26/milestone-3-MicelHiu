@@ -41,7 +41,7 @@ export default function CartPage() {
                 <ul className="flex flex-col gap-4 mb-8">
                 {cart.map((item) => (
                     <li key={item.id} className="flex items-center gap-4 border border-gray-100 rounded-xl p-4 shadow-sm">
-                    <Image src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg"/*  width={80} height={80} */ />
+                    <Image src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg" width={80} height={80} />
                     <div className="flex-1">
                         <h3 className="font-semibold text-sm">{item.name}</h3>
                         <p className="text-xs text-gray-400">Qty: {item.quantity}</p>

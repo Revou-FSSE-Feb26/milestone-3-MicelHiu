@@ -8,21 +8,19 @@ import {
     fetchProducts, fetchCategories, formatPrice, Product
 } from "@/lib/data";
 import Image from "next/image";
+import { useAuth } from "@/context/AuthContext";
 
 export default function UserDashboard() {
     const [slide, setSlide] = useState(0);
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [productList, setProductList] = useState<Product[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
+    const { isLoggedIn } = useAuth();
 
     // produk untuk slider (rekomendasi produk)
     const featured = productList.slice(0, 4);
 
     //auto rotate slider setiap 3 detik
     useEffect(() => {
-        const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-        setIsLoggedIn(loggedIn);
-
         Promise.all([fetchProducts(), fetchCategories()]).then(([prods, cats]) => {
             setProductList(prods);
             setCategories(cats);

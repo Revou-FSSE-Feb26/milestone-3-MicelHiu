@@ -3,20 +3,14 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export function Navigation() {
     const router = useRouter();
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-
-    useEffect(() => {
-        const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-        setIsLoggedIn(loggedIn);
-    }, []);
+    const { isLoggedIn, logout } = useAuth();
 
     const handleSignOut = () => {
-        localStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("userEmail");
-        setIsLoggedIn(false);
+        logout();
         router.push("/dashboard");
     };
 

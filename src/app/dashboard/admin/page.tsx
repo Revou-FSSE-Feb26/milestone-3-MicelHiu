@@ -6,16 +6,14 @@ import { useForm } from "react-hook-form";
 import {
     Product, ProductFormInput, fetchProducts, fetchCategories, createProduct, updateProduct, deleteProduct,
 } from "@/lib/data"
+import { useAuth } from "@/context/AuthContext";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ProductItem } from "@/components/ProductItem";
 
-const STORAGE_KEY = "revoshop_products"; //ekstrak key localstorage
-
 export default function AdminDashboard() {
     const router = useRouter();
-    const [isChecking, setIsChecking] = useState<boolean>(true);
-    const [userEmail, setUserEmail] = useState<string | null>(null);
+    const { isLoggedIn, token, logout } = useAuth();
 
     //CRUD
     const [productList, setProductList] = useState<Product[]>([]);
@@ -27,20 +25,14 @@ export default function AdminDashboard() {
 
     /* login */
     useEffect(() => {
-        const isLoggedIn = localStorage.getItem("isLoggedIn");
-        const email = localStorage.getItem("userEmail");
-
-        if(isLoggedIn !== "true") {
-            router.push("/login");
-        } else {
-            setUserEmail(email);
-            setIsChecking(false);
+        if (!isLoggedIn) {
+            router.push('/login');
         }
-    }, [router]);
+    }, [isLoggedIn, router]);
 
     //load products in the store
     useEffect(() => {
-        if (isChecking) return;
+        if (!isLoggedIn) return;
 
         const load = async() => {
             try {
@@ -58,12 +50,11 @@ export default function AdminDashboard() {
             }
         };
         load();
-    }, [isChecking]);
+    }, [isLoggedIn]);
 
     const handleSignOut = () => {
-        localStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("userEmail");
-        router.push("/dashboard");
+        logout();
+        router.push('/dashboard');
     };
 
     //initialize useForm with types and defaults
@@ -142,7 +133,7 @@ export default function AdminDashboard() {
         }
     };
 
-    if(isChecking) {
+    if(!isLoggedIn) {
         return (
             <>
                 <Navigation />
@@ -166,7 +157,7 @@ export default function AdminDashboard() {
                     Your Products
                 </h1>
                 <p className="mt-2 text-slate-500 text-sm">
-                    Authenticated as: <span className="font-bold">{userEmail}</span>
+                    Authenticated with token: <span className="font-bold">{token?.slice(0, 20)}...</span>
                 </p>
                 <button
                     onClick={handleSignOut}
