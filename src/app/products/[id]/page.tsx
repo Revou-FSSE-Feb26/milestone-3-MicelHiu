@@ -4,13 +4,14 @@ import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Navigation } from "@/components/Navigation";
 import { fetchProductById, formatPrice, Product } from "@/lib/data";
-import { addToCart } from "@/lib/cartStore";
+import { useCartStore } from "@/store/CartStore";
 import Image from "next/image";
 
 export default function ProductDetailPage({ params }: { params: Promise<{id: string }> }) {
     const {id} = use(params);
     const router = useRouter();
 
+    const { addToCart } = useCartStore();
     const [product, setProduct] = useState<Product | undefined>(undefined);
     const [loading, setLoading] = useState(true);
 

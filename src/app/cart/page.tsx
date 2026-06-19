@@ -2,31 +2,27 @@
 
 import { useState, useEffect } from "react";
 import { Navigation } from "@/components/Navigation";
-import { getCart, removeFromCart, clearCart, cartItem } from "@/lib/cartStore";
+/* import { getCart, removeFromCart, clearCart, cartItem } from "@/lib/cartStore"; */
 import { formatPrice } from "@/lib/data";
 import Link from "next/link";
 import Image from "next/image";
+import { useCartStore } from "@/store/CartStore";
 
 export default function CartPage() {
-    const [cart, setCart] = useState<cartItem[]>([]);
     const [showThanks, setShowThanks] = useState(false);
-
-    useEffect(() => {
-        setCart(getCart());
-    }, []);
+    const { items, removeFromCart, clearCart } = useCartStore();
 
     const handleRemove = (id: number) => {
         removeFromCart(id);
-        setCart(getCart());
+        //zustand otomatis update item
     };
 
     const handleCheckout = () => {
         clearCart();
-        setCart([]);
         setShowThanks(true);
     };
 
-    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     return (
     <>
@@ -34,12 +30,12 @@ export default function CartPage() {
         <main className="max-w-3xl mx-auto w-full px-6 py-12 min-h-screen bg-white text-black min-w-screen">
             <h1 className="text-2xl font-bold mb-8">Your Cart</h1>
 
-            {cart.length === 0 && !showThanks ? (
+            {items.length === 0 && !showThanks ? (
             <p className="text-gray-400 text-center mt-20">Your cart is empty.</p>
             ) : (
             <>
                 <ul className="flex flex-col gap-4 mb-8">
-                {cart.map((item) => (
+                {items.map((item) => (
                     <li key={item.id} className="flex items-center gap-4 border border-gray-100 rounded-xl p-4 shadow-sm">
                     <Image src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg" width={80} height={80} />
                     <div className="flex-1">
