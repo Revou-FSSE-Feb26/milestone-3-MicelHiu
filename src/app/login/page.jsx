@@ -89,7 +89,7 @@ export default function LoginPage() {
                     <footer className="mt-6 border-t border-slate-100 pt-4 text-center">
                         <p className="text-[10px] text-slate-400 leading-normal">
                             Demo Credentials:<br />
-                        <span className="font-semibold text-slate-550">mor_2314</span> / <span className="font-semibold text-slate-550">83r5^_</span>
+                        <span className="font-semibold text-slate-550">emilys</span> / <span className="font-semibold text-slate-550">emilyspass</span>
                         </p>
                     </footer>
                 </section>

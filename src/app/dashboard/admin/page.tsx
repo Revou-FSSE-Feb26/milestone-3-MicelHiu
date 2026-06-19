@@ -13,7 +13,7 @@ import { ProductItem } from "@/components/ProductItem";
 
 export default function AdminDashboard() {
     const router = useRouter();
-    const { isLoggedIn, token, logout } = useAuth();
+    const { isLoggedIn, token, user, logout } = useAuth();
 
     //CRUD
     const [productList, setProductList] = useState<Product[]>([]);
@@ -157,7 +157,7 @@ export default function AdminDashboard() {
                     Your Products
                 </h1>
                 <p className="mt-2 text-slate-500 text-sm">
-                    Authenticated with token: <span className="font-bold">{token?.slice(0, 20)}...</span>
+                    Authenticated as: <span className="font-bold">{user?.firstName} {user?.lastName}</span>
                 </p>
                 <button
                     onClick={handleSignOut}

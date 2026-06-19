@@ -15,15 +15,11 @@ export async function POST(req: NextRequest) {
         }
 
         //3. teruskan ke api
-        const response = await fetch("https://fakestoreapi.com/auth/login", {
+        const response = await fetch("https://dummyjson.com/user/login", {
             method: "POST",
             headers: { "Content-Type": "application/json"},
-            body: JSON.stringify({username, password}),
+            body: JSON.stringify({username, password, expiresInMins: 60*24}),
         });
-
-        console.log("status dari fake store: ", response.status);
-        const responseText = await response.text();
-        console.log("Response dari Fake Store:", responseText);
 
         //4. kalau api returnn error (user/pass salah)
         if(!response.ok) {
@@ -34,10 +30,17 @@ export async function POST(req: NextRequest) {
         }
 
         //5. ambil token dari response fake store api
-        const data = JSON.parse(responseText);
+        const data = await response.json();
 
         //6. kembalikan token ke client
-        return NextResponse.json({token: data.token}, {status: 200});
+        return NextResponse.json({
+            token: data.accessToken,
+            username: data.username,
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            image: data.image
+        }, {status: 200});
     } catch (error) {
         return NextResponse.json(
             {message: "internal server error"},
