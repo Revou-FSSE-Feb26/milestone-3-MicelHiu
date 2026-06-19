@@ -21,6 +21,10 @@ export async function POST(req: NextRequest) {
             body: JSON.stringify({username, password}),
         });
 
+        console.log("status dari fake store: ", response.status);
+        const responseText = await response.text();
+        console.log("Response dari Fake Store:", responseText);
+
         //4. kalau api returnn error (user/pass salah)
         if(!response.ok) {
             return NextResponse.json(
@@ -30,7 +34,7 @@ export async function POST(req: NextRequest) {
         }
 
         //5. ambil token dari response fake store api
-        const data = await response.json();
+        const data = JSON.parse(responseText);
 
         //6. kembalikan token ke client
         return NextResponse.json({token: data.token}, {status: 200});
