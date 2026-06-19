@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
+import axios from "axios";
+import { mutate } from "swr";
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");
@@ -11,7 +12,6 @@ export default function LoginPage() {
     const [error, setError] = useState(null)
 
     const router = useRouter();
-    const { login } = useAuth();
 
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
@@ -19,14 +19,26 @@ export default function LoginPage() {
         setLoading(true);
 
         try {
-            await login(username.trim(), password);
-            router.push('/dashboard/admin');
+            //connct form submission to local auth proxy / api/auth/login using axios
+            const response = await axios.post("/api/auth/login", {
+                username: username.trim(),
+                password,
+            });
+
+            //mutate the global SWR cache key to fetch fresh session details immedietly
+            await mutate("/api/auth/me", response.data, true);
+            if(response.data.role === "admin") {
+                router.push("/dashboard/admin");
+            } else {
+                router.push("/dashboard");
+            }
         } catch (err) {
-            setError(err.message || 'invalid username or password');
-        } finally {
+            setError(
+                err.response?.data?.error || "Authentication failed. Try emilys/emilyspass or michaelw/michaelwpass"
+            );
             setLoading(false);
         }
-    }
+    };
 
     return (
         <>
@@ -57,7 +69,7 @@ export default function LoginPage() {
                                 id='username'
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                placeholder="e.g mor_22314"
+                                placeholder="e.g emilys"
                                 required
                                 className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none transition focus:border-gray-500 focus:ring-2 focus:ring-slate-200"
                             />
@@ -89,7 +101,8 @@ export default function LoginPage() {
                     <footer className="mt-6 border-t border-slate-100 pt-4 text-center">
                         <p className="text-[10px] text-slate-400 leading-normal">
                             Demo Credentials:<br />
-                        <span className="font-semibold text-slate-550">emilys</span> / <span className="font-semibold text-slate-550">emilyspass</span>
+                        <span className="font-semibold text-slate-550">emilys</span> / <span className="font-semibold text-slate-550">emilyspass - CEO/admin</span> <br/>
+                        <span className='font-semibold text-slate-550'>michaelw / michaelwpass - user</span>
                         </p>
                     </footer>
                 </section>

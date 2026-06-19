@@ -6,14 +6,18 @@ import { useForm } from "react-hook-form";
 import {
     Product, ProductFormInput, fetchProducts, fetchCategories, createProduct, updateProduct, deleteProduct,
 } from "@/lib/data"
-import { useAuth } from "@/context/AuthContext";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ProductItem } from "@/components/ProductItem";
+import axios from "axios";
+import useSWR from "swr";
+import { useAuth } from "@/context/AuthContext";
+
+const fetcher = (url:string) => axios.get(url).then((res) => res.data);
 
 export default function AdminDashboard() {
     const router = useRouter();
-    const { isLoggedIn, token, user, logout } = useAuth();
+    const { isLoggedIn, user, logout } = useAuth();
 
     //CRUD
     const [productList, setProductList] = useState<Product[]>([]);

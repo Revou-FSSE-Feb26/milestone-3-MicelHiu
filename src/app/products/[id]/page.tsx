@@ -6,6 +6,11 @@ import { Navigation } from "@/components/Navigation";
 import { fetchProductById, formatPrice, Product } from "@/lib/data";
 import { useCartStore } from "@/store/CartStore";
 import Image from "next/image";
+import useSWR from "swr";
+import axios from "axios";
+import { AuthUser } from "@/lib/auth";
+
+const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 export default function ProductDetailPage({ params }: { params: Promise<{id: string }> }) {
     const {id} = use(params);
@@ -14,6 +19,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{id: str
     const { addToCart } = useCartStore();
     const [product, setProduct] = useState<Product | undefined>(undefined);
     const [loading, setLoading] = useState(true);
+    
+    const { data: user } = useSWR<AuthUser>("/api/auth/me", fetcher, {
+        shouldRetryOnError: false,
+    });
+    const isLoggedIn = !!user;
 
     useEffect(() => {
         fetchProductById(Number(id)).then((data) => {
@@ -47,6 +57,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{id: str
     }
 
     const handleAddToCart = () => {
+        if(!isLoggedIn) {
+            router.push(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+            return;
+        }
         addToCart(product);
         router.push("/cart");
     }
@@ -81,7 +95,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{id: str
                         onClick={handleAddToCart}
                         className="mt-4 w-fit bg-black text-white px-8 py-3 rounded-full hover:bg-gray-200 hover:text-black transition text-sm font-semibold cursor-pointer"
                         >
-                        Add to Cart
+                            Add to Cart
                         </button>
                     </div>
                 </div>

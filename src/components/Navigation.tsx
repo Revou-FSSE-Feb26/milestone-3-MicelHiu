@@ -1,17 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import useSWR, { mutate } from"swr";
+import axios from "axios";
 import { useAuth } from "@/context/AuthContext";
+import { AuthUser } from "@/lib/auth";
+
+const fetcher = (url:string) => axios.get(url).then((res) => res.data);
 
 export function Navigation() {
     const router = useRouter();
-    const { isLoggedIn, logout } = useAuth();
 
-    const handleSignOut = () => {
-        logout();
-        router.push("/dashboard");
+    const { data: user } = useSWR<AuthUser>("/api/auth/me", fetcher, {
+    shouldRetryOnError: false,
+    });
+
+    const isLoggedIn = !!user;
+
+    const handleSignOut = async () => {
+        try {
+            await axios.post("/api/auth/logout");
+            await mutate("/api/auth/me", null, false);
+            router.push("/dashboard");
+        } catch (err) {
+            console.error("Logout failed:", err);
+        }
     };
 
     return (
@@ -48,11 +62,19 @@ export function Navigation() {
 
             { isLoggedIn ? (
                 <div className="ml-auto flex items-center gap-3">
-                    <Link 
+                    {user?.role === "admin" && (
+                        <Link 
                         href="/dashboard/admin"
                         className="ml-auto text-sm font-medium text-black hover:text-slate-500 cursor-pointer"
+                        >
+                            Your Store
+                        </Link>
+                    )}
+                    <Link 
+                        href="/profile"
+                        className="ml-auto text-sm font-medium text-black hover:text-slate-500 cursor-pointer"
                     >
-                    Your Store
+                        Profile
                     </Link>
                     <button
                         onClick={handleSignOut}
@@ -63,7 +85,7 @@ export function Navigation() {
                 </div>
             ) : (
                 <Link href="/login" className="ml-auto text-sm font-medium text-black hover:text-slate-500">
-                    Your Store
+                    Sign In
                 </Link>
             )}
         </header>

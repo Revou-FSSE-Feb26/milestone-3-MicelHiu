@@ -1,49 +1,78 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { AuthUser, SessionData } from "@/lib/auth";
+import { Session } from "node:inspector";
+import path from "node:path";
 
-export async function POST(req: NextRequest) {
+export async function POST(request: Request) {
     try {
-        //1. ambil username dn password yang dikirim dari form login
-        const body = await req.json();
-        const { username, password } = body;
+        const { username, password} = await request.json();
 
-        //2. validasi, jangan sampai req kosong diterusin ke api
         if(!username || !password) {
             return NextResponse.json(
-                { message: "Username and password are required"},
-                { status: 400 }
+                {error: 'username and password are required'},
+                {status: 400}
             );
         }
-
-        //3. teruskan ke api
-        const response = await fetch("https://dummyjson.com/user/login", {
+        //forward (proxy) the login request to the external DummyJSON auth service
+        const response = await fetch("https://dummyjson.com/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json"},
-            body: JSON.stringify({username, password, expiresInMins: 60*24}),
+            body: JSON.stringify({
+                username,
+                password,
+                expiresInMins: 30,
+            }),
         });
 
-        //4. kalau api returnn error (user/pass salah)
         if(!response.ok) {
+            const errorData = await response.json();
             return NextResponse.json(
-                { message: "Invalid username or password"},
-                { status: 401 }
+                { error: errorData.message || "Invalid credentials" },
+                { status: response.status }
             );
-        }
+        } 
 
-        //5. ambil token dari response fake store api
         const data = await response.json();
 
-        //6. kembalikan token ke client
-        return NextResponse.json({
-            token: data.accessToken,
+        //map roles based on username
+        let role: "admin" | "user" = "user";
+        if(data.username === "emilys") {
+            role = "admin";
+        } else if (data.username === "michaelw") {
+            role = "user";
+        }
+
+        const authUser: AuthUser = {
+            id: data.id,
             username: data.username,
             email: data.email,
             firstName: data.firstName,
             lastName: data.lastName,
-            image: data.image
-        }, {status: 200});
-    } catch (error) {
+            image: data.image,
+            role,
+        };
+
+        const sessionData: SessionData = {
+            user: authUser,
+            token: data.accessToken,
+        };
+
+        //Map roles based on username, create a secure HttpOnly session cookie, and return user profile
+        const cookieStore = await cookies();
+        cookieStore.set("session", JSON.stringify(sessionData), {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/",
+            maxAge: 60 * 30, //30 min
+        });
+
+        return NextResponse.json(authUser);
+    } catch (error: any) {
+        console.error('login proxy error:', error);
         return NextResponse.json(
-            {message: "internal server error"},
+            {error: 'an unexpected authentication error occured'},
             {status: 500}
         );
     }

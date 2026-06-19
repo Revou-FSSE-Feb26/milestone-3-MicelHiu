@@ -7,19 +7,23 @@ import { Navigation } from "@/components/Navigation";
 import {
     fetchProducts, fetchCategories, formatPrice, Product
 } from "@/lib/data";
+import axios from "axios";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+
+const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 export default function UserDashboard() {
     const [slide, setSlide] = useState(0);
     const [productList, setProductList] = useState<Product[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
-    const { isLoggedIn } = useAuth();
+    const router = useRouter();
+    const {isLoggedIn, user, isLoading} = useAuth();
 
     // produk untuk slider (rekomendasi produk)
     const featured = productList.slice(0, 4);
 
-    //auto rotate slider setiap 3 detik
     useEffect(() => {
         Promise.all([fetchProducts(), fetchCategories()]).then(([prods, cats]) => {
             setProductList(prods);
@@ -27,6 +31,7 @@ export default function UserDashboard() {
         });
     }, []);
 
+    //auto rotate slider setiap 3 detik
     useEffect(() => {
         if(featured.length === 0) return;
         const timer = setInterval(() => {
@@ -34,6 +39,14 @@ export default function UserDashboard() {
         }, 3000);
         return () => clearInterval(timer);
     }, [featured.length]);
+
+    if(isLoading) {
+        return (
+            <main className="container text-center py-24">
+                <p className="text-sm text-slate-500 animate-pulse">Loading...</p>
+            </main>
+        );
+    }
 
     return (
         <>
@@ -119,15 +132,15 @@ export default function UserDashboard() {
 
                 {/* sign in */}
                 <section className="w-full bg-gray-200 text-black py-16 px-6 text-center">
-                    <h2 className="text-3xl font-bold mb-3">Have anything to sell?</h2>
+                    <h2 className="text-3xl font-bold mb-3">See any interesting?</h2>
                     <p className="text-gray-900 mb-6 max-w-md mx-auto">
-                        Join thousands of sellers on Revoshop. List your products, reach more customers, and grow your business — all in one place.
+                        Join thousands of customers on Revoshop. Search products, buy, explore more like there's no tomorrow!.
                     </p>
                     <Link 
-                        href={isLoggedIn ? "/dashboard/admin" : "/login"}
+                        href={isLoggedIn ? "/products" : "/login"}
                         className="inline-block bg-black text-white font-semibold px-8 py-3 rounded-full hover:bg-gray-200 hover:text-black transition"
                     >
-                        {isLoggedIn ? "Visit Your Store" : "Sign In"}
+                        {isLoggedIn ? "Explore more" : "Sign In"}
                     </Link>
                 </section>
             </main>
