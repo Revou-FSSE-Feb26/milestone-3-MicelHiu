@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useSWR, { mutate } from"swr";
 import axios from "axios";
-import { useAuth } from "@/context/AuthContext";
 import { AuthUser } from "@/lib/auth";
 
 const fetcher = (url:string) => axios.get(url).then((res) => res.data);
@@ -47,7 +46,7 @@ export function Navigation() {
                     Products
                 </Link>
                 <Link
-                    href="/cart"
+                    href={isLoggedIn? "/cart" : "/login"}
                     className="text-sm font-medium text-black hover:text-slate-500 cursor-pointer"
                 >
                     Cart

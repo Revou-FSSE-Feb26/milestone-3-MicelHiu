@@ -4,9 +4,6 @@ const api = axios.create({
     baseURL: "https://6a3590b3708f62230b192890.mockapi.io/products",
 });
 
-const CUSTOMS_PRODUCTS_KEY = "revoshop_custom_products";
-const DELETED_IDS_KEY = "revoshop_deleted_ids";
-
 export interface Product {
     id: number;
     name: string;
