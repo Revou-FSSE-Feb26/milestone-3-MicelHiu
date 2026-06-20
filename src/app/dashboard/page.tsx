@@ -10,7 +10,8 @@ import {
 import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import useSWR from "swr";
+import { AuthUser } from "@/lib/auth";
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -19,8 +20,10 @@ export default function UserDashboard() {
     const [productList, setProductList] = useState<Product[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
     const router = useRouter();
-    const {isLoggedIn, user, isLoading} = useAuth();
-
+    const { data: user, isLoading } = useSWR<AuthUser>("/api/auth/me", fetcher, {
+        shouldRetryOnError: false,
+    });
+    const isLoggedIn = !!user;
     // produk untuk slider (rekomendasi produk)
     const featured = productList.slice(0, 4);
 

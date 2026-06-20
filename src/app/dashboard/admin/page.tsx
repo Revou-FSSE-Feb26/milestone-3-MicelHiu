@@ -10,14 +10,20 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ProductItem } from "@/components/ProductItem";
 import axios from "axios";
-import useSWR from "swr";
-import { useAuth } from "@/context/AuthContext";
+import useSWR, { mutate } from "swr";
+import { AuthUser } from "@/lib/auth";
 
 const fetcher = (url:string) => axios.get(url).then((res) => res.data);
 
 export default function AdminDashboard() {
     const router = useRouter();
-    const { isLoggedIn, user, logout } = useAuth();
+    /* const { isLoggedIn, user, logout } = useAuth(); */
+
+    const { data: user } = useSWR<AuthUser>("/api/auth/me", fetcher, {
+    shouldRetryOnError: false,
+    });
+
+    const isLoggedIn = !!user;
 
     //CRUD
     const [productList, setProductList] = useState<Product[]>([]);
@@ -27,12 +33,12 @@ export default function AdminDashboard() {
     const [error, setError] = useState<string | null>(null);
     const [editingId, setEditingId] = useState<number | null>(null);
 
-    /* login */
+    /* /* login 
     useEffect(() => {
         if (!isLoggedIn) {
             router.push('/login');
         }
-    }, [isLoggedIn, router]);
+    }, [isLoggedIn, router]); */
 
     //load products in the store
     useEffect(() => {
@@ -56,9 +62,14 @@ export default function AdminDashboard() {
         load();
     }, [isLoggedIn]);
 
-    const handleSignOut = () => {
-        logout();
-        router.push('/dashboard');
+    const handleSignOut = async () => {
+        try {
+            await axios.post("/api/auth/logout");
+            await mutate("/api/auth/me", null, false);
+            router.push("/dashboard");
+        } catch (err) {
+            console.error("Logout failed:", err);
+        }
     };
 
     //initialize useForm with types and defaults
