@@ -1,9 +1,5 @@
 import axios from "axios";
 
-const api = axios.create({
-    baseURL: "https://6a3590b3708f62230b192890.mockapi.io/products",
-});
-
 export interface Product {
     id: number;
     name: string;
@@ -49,9 +45,10 @@ export const formatPrice = (price: number) => {
 
 
 //API
-export async function fetchProducts(limit=20): Promise<Product[]> {
-    const res = await api.get<Product[]>("/products");
-    return res.data.map((p) => ({
+export async function fetchProducts(): Promise<Product[]> {
+    const res = await fetch("/api/products");
+    const data: Product[] = await res.json();
+    return data.map((p) => ({
         ...p,
         id: Number(p.id),
         price: p.price * USD_TO_IDR,
@@ -60,8 +57,14 @@ export async function fetchProducts(limit=20): Promise<Product[]> {
 
 export async function fetchProductById(id: number): Promise<Product | null> {
     try {
-        const res = await api.get<Product>(`/products/${id}`);
-        return { ...res.data, id: Number(res.data.id), price: res.data.price * USD_TO_IDR, };
+        const res = await fetch(`/api/products/${id}`);
+        if(!res.ok) return null;
+        const data:Product = await res.json();
+        return {
+            ...data,
+            id: Number(data.id),
+            price: data.price*USD_TO_IDR,
+        };
     } catch {
         return null;
     }
@@ -74,19 +77,49 @@ export async function fetchCategories(): Promise<string[]> {
 }
 
 //create
-export async function createProduct(data: ProductFormInput): Promise<Product> {
-    const res = await api.post<Product>("/products", data);
-    return { ...res.data, id: Number(res.data.id), price: res.data.price * USD_TO_IDR, };
+export async function createProduct(data: ProductFormInput) {
+    const payload = {
+        ...data,
+        price: Number(data.price) / USD_TO_IDR,
+    }
+
+    const res = await fetch("/api/products", {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    return {
+        ...result,
+        id: Number(result.id),
+        price: result.price * USD_TO_IDR,
+    };
 }
 
 //update
-export async function updateProduct(id: number, data: ProductFormInput): Promise<Product> {
-    const res = await api.put<Product>(`/products/${id}`, data);
-    return { ...res.data, id: Number(res.data.id), price: res.data.price * USD_TO_IDR, };
+export async function updateProduct(id: number, data: ProductFormInput) {
+    const payload = {
+        ...data,
+        price: Number(data.price) / USD_TO_IDR,
+    };
+
+    const res = await fetch(`/api/products/${id}`, {
+        method: "PUT",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data),
+    });
+
+    const result = await res.json();
+    return {
+        ...result,
+        id: Number(result.id),
+        price: result.price * USD_TO_IDR,
+    };
 }
 
 //delete
-export async function deleteProduct(id:number): Promise<boolean> {
-    await api.delete(`/products/${id}`);
+export async function deleteProduct(id:number) {
+    await fetch(`/api/products/${id}`, {method: 'DELETE'});
     return true;
 }
