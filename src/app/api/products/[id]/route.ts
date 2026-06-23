@@ -3,6 +3,20 @@ import { cookies } from "next/headers";
 
 const MOCK_API = "https://6a3590b3708f62230b192890.mockapi.io/products";
 
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const numberId = Number(id);
+
+  const res = await fetch(`${MOCK_API}/products/${numberId}`);
+  if (!res.ok) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  
+  const data = await res.json();
+  return NextResponse.json(data);
+}
+
 //edit product
 export async function PUT(request: Request, { params }:{params: Promise<{id:string}>}) {
     const {id} = await params;
