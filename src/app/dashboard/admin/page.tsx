@@ -213,8 +213,8 @@ export default function AdminDashboard() {
                         </label>
                         <input
                         type="number"
-                        step="1"
-                        placeholder="e.g. 299000"
+                        step="any"
+                        placeholder="e.g. 299.99"
                         {...register("price", {
                             required: "Price is required",
                             min: { value: 1, message: "Min. Rp1" },

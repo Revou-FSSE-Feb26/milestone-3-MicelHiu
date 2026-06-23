@@ -103,7 +103,7 @@ export async function updateProduct(id: number, data: ProductFormInput) {
         ...data,
         price: Number(data.price) / USD_TO_IDR,
     };
-
+    
     const res = await fetch(`/api/products/${id}`, {
         method: "PUT",
         headers: {'Content-Type': 'application/json'},

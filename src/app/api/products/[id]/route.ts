@@ -5,6 +5,7 @@ const MOCK_API = "https://6a3590b3708f62230b192890.mockapi.io/products";
 
 //edit product
 export async function PUT(request: Request, { params }:{params: {id:number}}) {
+    const {id} = await params;
     const cookieStore = await cookies();
     //tolak req, kalau tidak ada session cookie, proteksi server-side
     if (!cookieStore.get('session')) return NextResponse.json(
@@ -13,7 +14,7 @@ export async function PUT(request: Request, { params }:{params: {id:number}}) {
     );
 
     const body = await request.json();
-    const res = await fetch(`${MOCK_API}/products/${params.id}`, {
+    const res = await fetch(`${MOCK_API}/products/${id}`, {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(body),
@@ -23,12 +24,13 @@ export async function PUT(request: Request, { params }:{params: {id:number}}) {
 
 //delete
 export async function DELETE(req_: Request, { params }: {params: {id: number}}) {
+    const {id} = await params;
     const cookieStore = await cookies();
     if(!cookieStore.get('session')) return NextResponse.json(
         {error: 'no session detected'},
         {status: 401},
     );
 
-    await fetch(`${MOCK_API}/products/${params.id}`, {method: "DELETE"});
+    await fetch(`${MOCK_API}/products/${id}`, {method: "DELETE"});
     return NextResponse.json({success: true});
 }
