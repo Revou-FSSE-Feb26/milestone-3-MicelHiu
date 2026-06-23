@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 const MOCK_API = "https://6a3590b3708f62230b192890.mockapi.io/products";
 
 //edit product
-export async function PUT(request: Request, { params }:{params: {id:string}}) {
+export async function PUT(request: Request, { params }:{params: Promise<{id:string}>}) {
     const {id} = await params;
     const numericId = Number(id);
     const cookieStore = await cookies();
@@ -24,7 +24,7 @@ export async function PUT(request: Request, { params }:{params: {id:string}}) {
 }
 
 //delete
-export async function DELETE(req_: Request, { params }: {params: {id: string}}) {
+export async function DELETE(req_: Request, { params }: {params: Promise<{id: string}>}) {
     const {id} = await params;
     const numericId = Number(id);
     const cookieStore = await cookies();
