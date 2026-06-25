@@ -9,7 +9,6 @@ import {
 } from "@/lib/data";
 import axios from "axios";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { AuthUser } from "@/lib/auth";
 
@@ -19,7 +18,9 @@ export default function UserDashboard() {
     const [slide, setSlide] = useState(0);
     const [productList, setProductList] = useState<Product[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
-    const router = useRouter();
+    const [isProductLoading, setIsProductLoading] = useState<boolean>(true);
+
+
     const { data: user, isLoading } = useSWR<AuthUser>("/api/auth/me", fetcher, {
         shouldRetryOnError: false,
     });
@@ -31,6 +32,7 @@ export default function UserDashboard() {
         Promise.all([fetchProducts(), fetchCategories()]).then(([prods, cats]) => {
             setProductList(prods);
             setCategories(cats);
+            setIsProductLoading(false);
         });
     }, []);
 
@@ -43,10 +45,10 @@ export default function UserDashboard() {
         return () => clearInterval(timer);
     }, [featured.length]);
 
-    if(isLoading) {
+    if(isLoading || isProductLoading) {
         return (
-            <main className="container text-center py-24">
-                <p className="text-sm text-slate-500 animate-pulse">Loading...</p>
+            <main className="container text-center py-24 bg-white text-black min-h-screen min-w-screen">
+                <p className="text-sm text-slate-500 animate-pulse">Setting up the environment, please wait a moment...</p>
             </main>
         );
     }

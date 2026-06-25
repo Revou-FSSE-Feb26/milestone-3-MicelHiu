@@ -33,13 +33,6 @@ export default function AdminDashboard() {
     const [error, setError] = useState<string | null>(null);
     const [editingId, setEditingId] = useState<number | null>(null);
 
-    /* /* login 
-    useEffect(() => {
-        if (!isLoggedIn) {
-            router.push('/login');
-        }
-    }, [isLoggedIn, router]); */
-
     //load products in the store
     useEffect(() => {
         if (!isLoggedIn) return;

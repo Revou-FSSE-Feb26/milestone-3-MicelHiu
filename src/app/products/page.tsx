@@ -14,16 +14,26 @@ function ProductsContent() {
     const [selected, setSelected] = useState(initialCategory);
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
+    const [isProductLoading, setIsProductLoading] = useState<boolean>(true);
 
     useEffect(() => {
         Promise.all([fetchProducts(), fetchCategories()]).then(([prods, cats]) => {
             setProducts(prods);
             setCategories(cats);
+            setIsProductLoading(false);
         });
     }, []);
 
     const filtered = 
         selected === "All" ? products : products.filter((p) => p.category === selected);
+    
+    if(isProductLoading) {
+        return (
+            <main className="container text-center py-24 bg-white text-black min-h-screen min-w-screen">
+                <p className="text-sm text-slate-500 animate-pulse">Setting up the environment, please wait a moment...</p>
+            </main>
+        );
+    }
     
     return (
         <>
