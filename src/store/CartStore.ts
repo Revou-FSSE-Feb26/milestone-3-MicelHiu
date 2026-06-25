@@ -10,6 +10,7 @@ interface CartStore {
     removeFromCart: (productId: number) => void;
     clearCart: () => void;
     getCartTotal: () => number;
+    updateQuantity: (productId: number, qty:number) => void;
 }
 
 export const useCartStore = create<CartStore>()(
@@ -46,6 +47,14 @@ export const useCartStore = create<CartStore>()(
 
             getCartTotal:() => {
                 return get().items.reduce((sum, item) => sum + item.quantity, 0);
+            },
+
+            updateQuantity: (productId, qty) => {
+                if(qty < 1) return;
+                set({
+                    items: get().items.map((item) => 
+                    item.id === productId ? { ...item, quantity: qty } : item),
+                });
             },
         }),
         {

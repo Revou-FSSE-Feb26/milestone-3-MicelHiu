@@ -10,7 +10,7 @@ import { useCartStore } from "@/store/CartStore";
 
 export default function CartPage() {
     const [showThanks, setShowThanks] = useState(false);
-    const { items, removeFromCart, clearCart } = useCartStore();
+    const { items, removeFromCart, clearCart, updateQuantity } = useCartStore();
 
     const handleRemove = (id: number) => {
         removeFromCart(id);
@@ -37,20 +37,37 @@ export default function CartPage() {
                 <ul className="flex flex-col gap-4 mb-8">
                 {items.map((item) => (
                     <li key={item.id} className="flex items-center gap-4 border border-gray-100 rounded-xl p-4 shadow-sm">
-                    <Image src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg" width={80} height={80} />
-                    <div className="flex-1">
-                        <h3 className="font-semibold text-sm">{item.name}</h3>
-                        <p className="text-xs text-gray-400">Qty: {item.quantity}</p>
-                    </div>
-                    <div className="text-right">
-                        <p className="font-bold">{formatPrice(item.price * item.quantity)}</p>
-                        <button
-                        onClick={() => handleRemove(item.id)}
-                        className="text-xs text-red-400 hover:text-red-600 mt-1"
-                        >
-                        Remove
-                        </button>
-                    </div>
+                        <Image src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg" width={80} height={80} />
+                        <div className="flex-1">
+                            <h3 className="font-semibold text-sm">{item.name}</h3>
+                            <p className="text-xs text-gray-400">Qty: {item.quantity}</p>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                className="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center text-sm font-semibold hover:bg-gray-100 transition cursor-pointer"
+                            >
+                                -
+                            </button>
+                            <span className="text-sm font-semibold w-5 text-center">{item.quantity}</span>
+                            <button
+                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                className="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center text-sm font-semibold hover:bg-gray-100 transition cursor-pointer"
+                            >
+                                +
+                            </button>
+                        </div>
+
+                        <div className="text-right">
+                            <p className="font-bold">{formatPrice(item.price * item.quantity)}</p>
+                            <button
+                            onClick={() => handleRemove(item.id)}
+                            className="text-xs text-red-400 hover:text-red-600 mt-1"
+                            >
+                            Remove
+                            </button>
+                        </div>
                     </li>
                 ))}
                 </ul>
