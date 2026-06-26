@@ -60,8 +60,8 @@ export async function POST(request: Request) {
         const cookieStore = await cookies();
         cookieStore.set("session", JSON.stringify(sessionData), {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            secure: true/* process.env.NODE_ENV === "production" */,
+            sameSite: "strict",
             path: "/",
             maxAge: 60 * 30, //30 min
         });
