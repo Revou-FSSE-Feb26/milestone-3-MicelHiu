@@ -7,18 +7,18 @@ import { Navigation } from "@/components/Navigation";
 import {
     fetchProducts, fetchCategories, formatPrice, Product
 } from "@/lib/data";
-import axios from "axios";
 import Image from "next/image";
 import useSWR from "swr";
 import { AuthUser } from "@/lib/auth";
 
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function UserDashboard() {
     const [slide, setSlide] = useState(0);
     const [productList, setProductList] = useState<Product[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
     const [isProductLoading, setIsProductLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
 
     const { data: user, isLoading } = useSWR<AuthUser>("/api/auth/me", fetcher, {
@@ -29,11 +29,13 @@ export default function UserDashboard() {
     const featured = productList.slice(0, 4);
 
     useEffect(() => {
-        Promise.all([fetchProducts(), fetchCategories()]).then(([prods, cats]) => {
-            setProductList(prods);
-            setCategories(cats);
-            setIsProductLoading(false);
-        });
+        Promise.all([fetchProducts(), fetchCategories()])
+            .then(([prods, cats]) => {
+                setProductList(prods);
+                setCategories(cats);
+            })
+            .catch(() => setError('Product loading failed. Please try again later'))
+            .finally(() => setIsProductLoading(false));
     }, []);
 
     //auto rotate slider setiap 3 detik
@@ -47,9 +49,25 @@ export default function UserDashboard() {
 
     if(isLoading || isProductLoading) {
         return (
-            <main className="container text-center py-24 bg-white text-black min-h-screen min-w-screen">
-                <p className="text-sm text-slate-500 animate-pulse">Setting up the environment, please wait a moment...</p>
-            </main>
+            <>
+                <Navigation />
+                <main className="container text-center py-24 bg-white text-black min-h-screen min-w-screen">
+                    <p className="text-sm text-slate-500 animate-pulse">Setting up the environment, please wait a moment...</p>
+                </main>
+                <Footer />
+            </>
+        );
+    }
+
+    if(error) {
+        return (
+            <>
+                <Navigation />
+                <main className="container text-center py-24 bg-white text-black min-h-screen min-w-screen">
+                    <p className="text-sm text-red-600">{error}</p>
+                </main>
+                <Footer />
+            </>
         );
     }
 

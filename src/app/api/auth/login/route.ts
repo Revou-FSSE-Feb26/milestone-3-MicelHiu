@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { AuthUser, SessionData } from "@/lib/auth";
-import { Session } from "node:inspector";
-import path from "node:path";
 
 export async function POST(request: Request) {
     try {

@@ -9,11 +9,10 @@ import {
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ProductItem } from "@/components/ProductItem";
-import axios from "axios";
 import useSWR, { mutate } from "swr";
 import { AuthUser } from "@/lib/auth";
 
-const fetcher = (url:string) => axios.get(url).then((res) => res.data);
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function AdminDashboard() {
     const router = useRouter();
@@ -57,7 +56,7 @@ export default function AdminDashboard() {
 
     const handleSignOut = async () => {
         try {
-            await axios.post("/api/auth/logout");
+            await fetch("/api/auth/logout", {method: 'POST'});
             await mutate("/api/auth/me", null, false);
             router.push("/dashboard");
         } catch (err) {

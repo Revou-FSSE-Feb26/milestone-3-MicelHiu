@@ -15,13 +15,16 @@ function ProductsContent() {
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
     const [isProductLoading, setIsProductLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        Promise.all([fetchProducts(), fetchCategories()]).then(([prods, cats]) => {
-            setProducts(prods);
-            setCategories(cats);
-            setIsProductLoading(false);
-        });
+        Promise.all([fetchProducts(), fetchCategories()])
+            .then(([prods, cats]) => {
+                setProducts(prods);
+                setCategories(cats);
+            })
+            .catch (() => setError('Products loading failed, Please try again later.'))
+            .finally(() => setIsProductLoading(false));
     }, []);
 
     const filtered = 
@@ -29,12 +32,28 @@ function ProductsContent() {
     
     if(isProductLoading) {
         return (
-            <main className="container text-center py-24 bg-white text-black min-h-screen min-w-screen">
-                <p className="text-sm text-slate-500 animate-pulse">Setting up the environment, please wait a moment...</p>
-            </main>
+            <>
+                <Navigation />
+                <main className="container text-center py-24 bg-white text-black min-h-screen min-w-screen">
+                    <p className="text-sm text-slate-500 animate-pulse">Setting up the environment, please wait a moment...</p>
+                </main>
+                <Footer />
+            </>
         );
     }
-    
+
+    if(error) {
+        return (
+            <>
+                <Navigation />
+                <main className="container text-center py-24 bg-white text-black min-h-screen min-w-screen">
+                    <p className="text-sm text-red-600">{error}</p>
+                </main>
+                <Footer />
+            </>
+        );
+    }
+
     return (
         <>
             <Navigation />

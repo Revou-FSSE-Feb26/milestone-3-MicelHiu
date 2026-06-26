@@ -3,13 +3,12 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { AuthUser } from "@/lib/auth";
-import axios from "axios";
 import useSWR from "swr";
 
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Profile() {
-    const { data: user, error, isLoading } =        useSWR<AuthUser>("/api/auth/me", fetcher, {
+    const { data: user, error, isLoading } = useSWR<AuthUser>("/api/auth/me", fetcher, {
     shouldRetryOnError: false,
     });
 
@@ -26,6 +25,7 @@ export default function Profile() {
                     </p>
                 </div>
             </main>
+            <Footer />
         </>
         );
     }
@@ -69,6 +69,7 @@ export default function Profile() {
                     </div>
                 </section>
             </main>
+            <Footer />
         </>
     );
 }

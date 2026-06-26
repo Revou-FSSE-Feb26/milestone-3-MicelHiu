@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from "axios";
 import { mutate } from "swr";
 
 export default function LoginPage() {
@@ -19,15 +18,20 @@ export default function LoginPage() {
         setLoading(true);
 
         try {
-            //connct form submission to local auth proxy / api/auth/login using axios
-            const response = await axios.post("/api/auth/login", {
-                username: username.trim(),
-                password,
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username: username.trim(), password}),
             });
+            const data = await res.json();
+
+            if(!res.ok) {
+                throw new Error(data.error || 'Authentication failed');
+            }
 
             //mutate the global SWR cache key to fetch fresh session details immedietly
-            await mutate("/api/auth/me", response.data, true);
-            if(response.data.role === "admin") {
+            await mutate("/api/auth/me", data, true);
+            if(data.role === "admin") {
                 router.push("/dashboard/admin");
             } else {
                 router.push("/dashboard");

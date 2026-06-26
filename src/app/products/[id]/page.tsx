@@ -3,14 +3,14 @@
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
 import { fetchProductById, formatPrice, Product } from "@/lib/data";
 import { useCartStore } from "@/store/CartStore";
 import Image from "next/image";
 import useSWR from "swr";
-import axios from "axios";
 import { AuthUser } from "@/lib/auth";
 
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function ProductDetailPage({ params }: { params: Promise<{id: string }> }) {
     const {id} = use(params);
@@ -99,7 +99,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{id: str
                         </button>
                     </div>
                 </div>
-            </main>                     
+            </main>
+            <Footer />                     
         </>
     );
 }
