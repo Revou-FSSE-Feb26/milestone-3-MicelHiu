@@ -119,7 +119,7 @@ export default function AdminDashboard() {
     const startEdit = (product: Product) => {
         setEditingId(product.id);
         setValue("name", product.name);
-        setValue("price", product.price / 16000);
+        setValue("price", product.price);
         setValue("description", product.description);
         setValue("image", product.image);
         setValue("category", product.category);

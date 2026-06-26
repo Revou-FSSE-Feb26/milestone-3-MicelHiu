@@ -22,12 +22,10 @@ export interface ProductItemProps {
     disabled: boolean;
 }
 
-const USD_TO_IDR = 16000;
-
 export const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("id-ID", {
+    return new Intl.NumberFormat("en-US", {
         style: "currency",
-        currency: "IDR",
+        currency: "USD",
         minimumFractionDigits: 0,
     }). format(price);
 };
@@ -40,7 +38,7 @@ export async function fetchProducts(): Promise<Product[]> {
     return data.map((p) => ({
         ...p,
         id: Number(p.id),
-        price: p.price * USD_TO_IDR,
+        price: p.price,
     }));
 }
 
@@ -52,7 +50,7 @@ export async function fetchProductById(id: number): Promise<Product | null> {
         return {
             ...data,
             id: Number(data.id),
-            price: data.price*USD_TO_IDR,
+            price: data.price,
         };
     } catch {
         return null;
@@ -69,7 +67,7 @@ export async function fetchCategories(): Promise<string[]> {
 export async function createProduct(data: ProductFormInput) {
     const payload = {
         ...data,
-        price: Number(data.price) / USD_TO_IDR,
+        price: Number(data.price),
     }
 
     const res = await fetch("/api/products", {
@@ -82,7 +80,7 @@ export async function createProduct(data: ProductFormInput) {
     return {
         ...result,
         id: Number(result.id),
-        price: result.price * USD_TO_IDR,
+        price: result.price,
     };
 }
 
@@ -90,7 +88,7 @@ export async function createProduct(data: ProductFormInput) {
 export async function updateProduct(id: number, data: ProductFormInput) {
     const payload = {
         ...data,
-        price: Number(data.price) / USD_TO_IDR,
+        price: Number(data.price),
     };
     
     const res = await fetch(`/api/products/${id}`, {
@@ -103,7 +101,7 @@ export async function updateProduct(id: number, data: ProductFormInput) {
     return {
         ...result,
         id: Number(result.id),
-        price: result.price * USD_TO_IDR,
+        price: result.price,
     };
 }
 
