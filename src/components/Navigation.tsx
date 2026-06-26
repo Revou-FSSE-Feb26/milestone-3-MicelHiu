@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import useSWR, { mutate } from"swr";
 import { AuthUser } from "@/lib/auth";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) => 
+    fetch(url).then((res) => {
+        if(!res.ok) throw new Error(String(res.status));
+        return res.json();
+    });
 
 export function Navigation() {
     const router = useRouter();
