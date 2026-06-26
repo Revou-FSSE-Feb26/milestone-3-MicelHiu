@@ -8,6 +8,8 @@ export async function GET() {
         const cookieStore = await cookies();
         const sessionCookie = cookieStore.get('session');
 
+        console.log('Cookie received:', sessionCookie);
+
         if(!sessionCookie || !sessionCookie.value) {
             return NextResponse.json(
                 {error: 'not authenticated'},
