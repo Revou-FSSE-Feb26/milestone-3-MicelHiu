@@ -20,9 +20,11 @@ export default function UserDashboard() {
     const [isProductLoading, setIsProductLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
-
     const { data: user, isLoading } = useSWR<AuthUser>("/api/auth/me", fetcher, {
         shouldRetryOnError: false,
+        onErrorRetry: (error) => {
+            if (error.status === 401) return; // ← abaikan 401
+        },
     });
     const isLoggedIn = !!user;
     // produk untuk slider (rekomendasi produk)

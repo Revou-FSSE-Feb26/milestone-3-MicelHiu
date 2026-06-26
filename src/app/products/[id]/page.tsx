@@ -22,6 +22,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{id: str
     
     const { data: user } = useSWR<AuthUser>("/api/auth/me", fetcher, {
         shouldRetryOnError: false,
+        onErrorRetry: (error) => {
+            if (error.status === 401) return; // ← abaikan 401
+        },
     });
     const isLoggedIn = !!user;
 

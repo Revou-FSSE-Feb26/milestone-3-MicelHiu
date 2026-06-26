@@ -9,7 +9,10 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Profile() {
     const { data: user, error, isLoading } = useSWR<AuthUser>("/api/auth/me", fetcher, {
-    shouldRetryOnError: false,
+        shouldRetryOnError: false,
+        onErrorRetry: (error) => {
+            if (error.status === 401) return; // ← abaikan 401
+        },
     });
 
     // Render a loading state during validation

@@ -19,7 +19,10 @@ export default function AdminDashboard() {
     /* const { isLoggedIn, user, logout } = useAuth(); */
 
     const { data: user } = useSWR<AuthUser>("/api/auth/me", fetcher, {
-    shouldRetryOnError: false,
+        shouldRetryOnError: false,
+        onErrorRetry: (error) => {
+            if (error.status === 401) return; // ← abaikan 401
+        },
     });
 
     const isLoggedIn = !!user;
