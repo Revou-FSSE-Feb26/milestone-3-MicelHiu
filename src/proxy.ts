@@ -5,6 +5,22 @@ import { SessionData } from "@/lib/auth";
 export function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
+    if(pathname.startsWith("/cart")) {
+        const sessionCookie = request.cookies.get('session')?.value;
+        if(!sessionCookie) {
+            const loginUrl = new URL("/login", request.url);
+            return NextResponse.redirect(loginUrl);
+        }
+        try {
+            JSON.parse(sessionCookie);
+            return NextResponse.next();
+        } catch (error) {
+            const loginRedirect = NextResponse.redirect(new URL('/login', request.url));
+            loginRedirect.cookies.delete('session');
+            return loginRedirect;
+        }
+    }
+
     if(pathname.startsWith("/dashboard/admin")) {
         const sessionCookie = request.cookies.get('session')?.value;
         if(!sessionCookie) {
@@ -36,5 +52,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/dashboard/admin/:path*"],
+    matcher: ["/dashboard/admin/:path*", "/cart/:path*", "/cart"],
 };
