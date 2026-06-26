@@ -5,7 +5,11 @@ import { Footer } from "@/components/Footer";
 import { AuthUser } from "@/lib/auth";
 import useSWR from "swr";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) => 
+    fetch(url).then((res) => {
+        if(!res.ok) throw new Error(String(res.status));
+        return res.json();
+    });
 
 export default function Profile() {
     const { data: user, error, isLoading } = useSWR<AuthUser>("/api/auth/me", fetcher, {

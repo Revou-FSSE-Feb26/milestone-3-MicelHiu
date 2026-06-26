@@ -12,7 +12,11 @@ import { ProductItem } from "@/components/ProductItem";
 import useSWR, { mutate } from "swr";
 import { AuthUser } from "@/lib/auth";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) => 
+    fetch(url).then((res) => {
+        if(!res.ok) throw new Error(String(res.status));
+        return res.json();
+    });
 
 export default function AdminDashboard() {
     const router = useRouter();
