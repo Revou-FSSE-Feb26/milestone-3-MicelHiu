@@ -22,6 +22,7 @@ export default function LoginPage() {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({username: username.trim(), password}),
+                credentials: 'include',
             });
             const data = await res.json();
 
@@ -38,7 +39,7 @@ export default function LoginPage() {
             }
         } catch (err) {
             setError(
-                err.response?.data?.error || "Authentication failed. Try emilys/emilyspass or michaelw/michaelwpass"
+                err.message || "Authentication failed. Try emilys/emilyspass or michaelw/michaelwpass"
             );
             setLoading(false);
         }
