@@ -23,6 +23,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{id: str
     const { addToCart } = useCartStore();
     const [product, setProduct] = useState<Product | undefined>(undefined);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<String | null>(null);
     
     const { data: user } = useSWR<AuthUser>("/api/auth/me", fetcher, {
         shouldRetryOnError: false,
@@ -32,12 +33,22 @@ export default function ProductDetailPage({ params }: { params: Promise<{id: str
     });
     const isLoggedIn = !!user;
 
-    useEffect(() => {
+    /* useEffect(() => {
         fetchProductById(Number(id)).then((data) => {
             setProduct(data ?? undefined);
             setLoading(false);
         })
-    }, [id]);
+    }, [id]); */
+
+    useEffect(() => {
+        fetchProductById(Number(id))
+            .then((data) => {
+                if (!data) setError("Product not found.");
+                else setProduct(data);
+            })
+            .catch(() => setError("Product loading failed, please try again."))
+            .finally(() => setLoading(false));
+}, [id]);
 
     if (loading) {
         return (
@@ -56,7 +67,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{id: str
                 <Navigation />
                 <main className="flex flex-col items-center justify-center min-h-screen">
                     <p className="text-gray-500">
-                        Product not found.
+                        {error}
                     </p>
                 </main>
             </>
