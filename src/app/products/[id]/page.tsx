@@ -2,7 +2,6 @@
 
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { fetchProductById, formatPrice, Product } from "@/lib/data";
 import { useCartStore } from "@/store/CartStore";
@@ -53,8 +52,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{id: str
     if (loading) {
         return (
             <>
-                <Navigation />
-                <main className="flex items-center justify-center min-h-screen">
+                <main className="flex items-center justify-center min-h-screen bg-white text-gray-500">
                     <p className="text-gray-400 animate-pulse">Loading...</p>
                 </main>
             </>
@@ -64,9 +62,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{id: str
     if (!product) {
         return (
             <>
-                <Navigation />
-                <main className="flex flex-col items-center justify-center min-h-screen">
-                    <p className="text-gray-500">
+                <main className="flex flex-col items-center justify-center min-h-screen bg-white text-gray-500">
+                    <p className="text-gray-400">
                         {error}
                     </p>
                 </main>
@@ -85,7 +82,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{id: str
 
     return (
         <>
-        <Navigation />
             <main className="bg-white text-black max-w-5xl mx-auto w-full px-6 py-12 min-h-screen min-w-screen">
                 <button
                 onClick={() => router.back()}

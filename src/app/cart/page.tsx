@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Navigation } from "@/components/Navigation";
-/* import { getCart, removeFromCart, clearCart, cartItem } from "@/lib/cartStore"; */
 import { formatPrice } from "@/lib/data";
 import Link from "next/link";
 import Image from "next/image";
@@ -10,7 +8,7 @@ import { useCartStore } from "@/store/CartStore";
 
 export default function CartPage() {
     const [showThanks, setShowThanks] = useState(false);
-    const { items, removeFromCart, clearCart, updateQuantity } = useCartStore();
+    const { items, removeFromCart, clearCart, getCartTotal, updateQuantity } = useCartStore();
 
     const handleRemove = (id: number) => {
         removeFromCart(id);
@@ -22,11 +20,8 @@ export default function CartPage() {
         setShowThanks(true);
     };
 
-    const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
     return (
     <>
-        <Navigation />
         <main className="max-w-3xl mx-auto w-full px-6 py-12 min-h-screen bg-white text-black min-w-screen">
             <h1 className="text-2xl font-bold mb-8">Your Cart</h1>
 
@@ -75,7 +70,7 @@ export default function CartPage() {
                 <div className="flex items-center justify-between border-t border-gray-200 pt-6">
                 <div>
                     <p className="text-sm text-gray-400">Total</p>
-                    <p className="text-2xl font-bold">{formatPrice(total)}</p>
+                    <p className="text-2xl font-bold">{formatPrice(getCartTotal())}</p>
                 </div>
                 <button
                     onClick={handleCheckout}

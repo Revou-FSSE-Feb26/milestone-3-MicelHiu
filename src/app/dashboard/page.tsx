@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Footer } from "@/components/Footer";
-import { Navigation } from "@/components/Navigation";
 import {
     fetchProducts, fetchCategories, formatPrice, Product
 } from "@/lib/data";
@@ -56,7 +55,6 @@ export default function UserDashboard() {
     if(isLoading || isProductLoading) {
         return (
             <>
-                <Navigation />
                 <main className="container text-center py-24 bg-white text-black min-h-screen min-w-screen">
                     <p className="text-sm text-slate-500 animate-pulse">Setting up the environment, please wait a moment...</p>
                 </main>
@@ -68,7 +66,6 @@ export default function UserDashboard() {
     if(error) {
         return (
             <>
-                <Navigation />
                 <main className="container text-center py-24 bg-white text-black min-h-screen min-w-screen">
                     <p className="text-sm text-red-600">{error}</p>
                 </main>
@@ -79,7 +76,6 @@ export default function UserDashboard() {
 
     return (
         <>
-            <Navigation />
             <main className="flex flex-col bg-white text-black min-h-screen">
                 <section className="w-full py-16 px-6 text-center">
                     <h1 className="text-5xl font-bold">Welcome to Revoshop</h1>

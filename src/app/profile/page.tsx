@@ -1,6 +1,5 @@
 "use client";
 
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { AuthUser } from "@/lib/auth";
 import useSWR from "swr";
@@ -23,7 +22,6 @@ export default function Profile() {
     if (isLoading || (!user && !error)) {
         return (
         <>
-            <Navigation />
             <main className="min-h-screen bg-sky-50 flex items-center justify-center font-sans">
                 <div className="text-center p-8 bg-white border border-sky-100 rounded-3xl shadow-sm max-w-sm mx-auto">
                     <span className="text-3xl block mb-3 animate-spin">📦</span>
@@ -39,7 +37,6 @@ export default function Profile() {
 
     return (
         <>
-            <Navigation />
             <main className="bg-white text-black min-h-screen">
                 <section className="flex justify-center gap-8 items-center py-30">
                     <div className="md:col-span-3 bg-white border-2 border-sky-200 border-b-4 border-b-sky-300 rounded-3xl p-8 shadow-sm flex flex-col gap-6 items-center sm:items-start">

@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import {
     Product, ProductFormInput, fetchProducts, fetchCategories, createProduct, updateProduct, deleteProduct,
 } from "@/lib/data"
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ProductItem } from "@/components/ProductItem";
 import useSWR, { mutate } from "swr";
@@ -150,7 +149,6 @@ export default function AdminDashboard() {
     if(!isLoggedIn) {
         return (
             <>
-                <Navigation />
                 <main className="container text-center py-24">
                     <p className="text-sm text-slate-500 animate-pulse font-semibold">
                         Checking credentials session...
@@ -163,7 +161,6 @@ export default function AdminDashboard() {
 
     return (
         <>
-            <Navigation />
             <main className="shop-container mx-auto px-6 py-10 bg-white text-black min-h-screen min-w-screen">
                 {/* Header */}
                 <header className="mb-10 border-b border-slate-200 pb-6 flex flex-col items-center justify-between gap-4">

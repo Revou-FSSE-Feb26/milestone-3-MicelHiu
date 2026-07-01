@@ -2,7 +2,6 @@
 
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { fetchProducts, fetchCategories, formatPrice, Product } from "@/lib/data";
 import Link from "next/link";
@@ -33,7 +32,6 @@ function ProductsContent() {
     if(isProductLoading) {
         return (
             <>
-                <Navigation />
                 <main className="container text-center py-24 bg-white text-black min-h-screen min-w-screen">
                     <p className="text-sm text-slate-500 animate-pulse">Setting up the environment, please wait a moment...</p>
                 </main>
@@ -45,7 +43,6 @@ function ProductsContent() {
     if(error) {
         return (
             <>
-                <Navigation />
                 <main className="container text-center py-24 bg-white text-black min-h-screen min-w-screen">
                     <p className="text-sm text-red-600">{error}</p>
                 </main>
@@ -56,7 +53,6 @@ function ProductsContent() {
 
     return (
         <>
-            <Navigation />
             <main className="bg-white text-black max-w-6xl mx-auto w-full px-6 py-10 flex gap-8 min-h-screen min-w-screen">
                 {/* sidebar filter */}
                 <aside className="w-48 shrink-0">

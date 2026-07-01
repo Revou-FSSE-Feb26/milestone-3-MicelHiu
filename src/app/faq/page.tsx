@@ -1,4 +1,3 @@
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 
 const faqs = [
@@ -12,7 +11,6 @@ const faqs = [
 export default function FAQPage() {
     return (
         <>
-        <Navigation />
         <main className="bg-white text-black mx-auto w-full px-12 py-12 min-h-screen">
             <h1 className="text-center text-2xl font-bold mb-2">Frequently Asked Questions</h1>
             <p className="text-center text-gray-400 text-sm mb-8">Everything you need to know about Revoshop.</p>
